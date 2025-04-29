@@ -18,13 +18,24 @@ jobs:
     - name: Clear Lean cache
       run: rm -rf $HOME/.elan
 
-    # Install Lean 4 and Lake with the specified version
-    - name: Install Lean 4 and Lake
+    # Install Lean 4
+    - name: Install Lean 4
       run: |
         curl https://raw.githubusercontent.com/leanprover/elan/master/elan-init.sh -sSf | sh -s -- -y --default-toolchain leanprover/lean4:4.3.0
         echo "$HOME/.elan/bin" >> $GITHUB_PATH
-        # Force reinstall Lake to ensure latest version
+
+    # Install Lake and verify installation
+    - name: Install Lake
+      run: |
         curl https://raw.githubusercontent.com/leanprover/lake/master/lake-install.sh -sSf | sh -s --
+        lake --version || echo "Failed to install Lake"
+
+    # Debug: Print Lake version and environment
+    - name: Debug Lake installation
+      run: |
+        which lake
+        lake --version
+        ls -la $HOME/.elan/bin
 
     # Update dependencies (including mathlib)
     - name: Update Lake dependencies
